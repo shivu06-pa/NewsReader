@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
 import { useColorScheme } from 'react-native';
 
 const ThemeContext = createContext();
@@ -7,8 +7,13 @@ export const ThemeProvider = ({ children }) => {
   const systemTheme = useColorScheme();
   const [theme, setTheme] = useState(systemTheme || 'light');
 
+ 
+  useEffect(() => {
+    setTheme(systemTheme || 'light');
+  }, [systemTheme]);
+
   const toggleTheme = () => {
-    setTheme(theme === 'light' ? 'dark' : 'light');
+    setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
   };
 
   return (

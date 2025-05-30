@@ -5,6 +5,7 @@ import {
   RefreshControl,
   Text,
   StyleSheet,
+  ActivityIndicator,
   useColorScheme,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
@@ -14,7 +15,7 @@ import { useTheme } from '../ThemeContext'; // Make sure ThemeContext path is co
 
 export default function HomeScreen({ navigation }) {
   const dispatch = useDispatch();
-  const { data, status } = useSelector((state) => state.articles);
+  const { data, status, isUpToDate } = useSelector((state) => state.articles);
   const { theme } = useTheme();
 
   useEffect(() => {
@@ -26,6 +27,15 @@ export default function HomeScreen({ navigation }) {
 
   return (
     <View style={themedStyles.container}>
+      {status === 'loading' && data.length === 0 && (
+        <ActivityIndicator size="large" color={isDark ? '#fff' : '#000'} style={{ marginTop: 32 }} />
+      )}
+      {/* Show message if news is up to date and there is at least one article */}
+      {isUpToDate && status === 'succeeded' && data.length > 0 && (
+        <Text style={{ textAlign: 'center', marginVertical: 8, color: isDark ? '#ccc' : '#555' }}>
+          No new articles. Already up to date!
+        </Text>
+      )}
       <FlatList
         data={data}
         keyExtractor={(item) => item.url}
@@ -43,7 +53,9 @@ export default function HomeScreen({ navigation }) {
           />
         }
         ListEmptyComponent={
-          <Text style={themedStyles.emptyText}>No articles available.</Text>
+          status !== 'loading' && (
+            <Text style={themedStyles.emptyText}>No articles available.</Text>
+          )
         }
       />
     </View>

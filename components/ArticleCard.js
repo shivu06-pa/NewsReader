@@ -23,22 +23,24 @@ export default function ArticleCard({ item, onPress }) {
   const textColor = theme === 'dark' ? '#fff' : '#000';
 
   return (
-    <TouchableOpacity onPress={onPress} style={[styles.card, { backgroundColor }]}>
-      {item?.urlToImage && (
-        <Image source={{ uri: item.urlToImage }} style={styles.image} />
-      )}
-      <View style={styles.content}>
-        <Text style={[styles.title, { color: textColor }]}>{item?.title}</Text>
-        <Text style={[styles.source, { color: textColor }]}>{item?.source?.name}</Text>
-        <TouchableOpacity onPress={handleBookmark}>
-          <Ionicons
-            name={isBookmarked ? 'bookmark' : 'bookmark-outline'}
-            size={20}
-            color={isBookmarked ? '#007AFF' : textColor}
-          />
-        </TouchableOpacity>
-      </View>
-    </TouchableOpacity>
+    <View style={[styles.card, { backgroundColor }]}>
+      <TouchableOpacity onPress={onPress} activeOpacity={0.8}>
+        {item?.urlToImage && (
+          <Image source={{ uri: item.urlToImage }} style={styles.image} />
+        )}
+        <View style={styles.content}>
+          <Text style={[styles.title, { color: textColor }]}>{item?.title}</Text>
+          <Text style={[styles.source, { color: textColor }]}>{item?.source?.name}</Text>
+        </View>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={handleBookmark} style={styles.bookmarkIcon}>
+        <Ionicons
+          name={isBookmarked ? 'bookmark' : 'bookmark-outline'}
+          size={20}
+          color={isBookmarked ? '#007AFF' : textColor}
+        />
+      </TouchableOpacity>
+    </View>
   );
 }
 
@@ -48,6 +50,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     overflow: 'hidden',
     elevation: 2,
+    position: 'relative',
   },
   image: {
     width: '100%',
@@ -63,5 +66,13 @@ const styles = StyleSheet.create({
   source: {
     fontSize: 12,
     marginVertical: 5,
+  },
+  bookmarkIcon: {
+    position: 'absolute',
+    right: 12,
+    bottom: 12,
+    padding: 8,
+    backgroundColor: 'transparent',
+    zIndex: 2,
   },
 });

@@ -1,4 +1,6 @@
 import React, { useEffect } from 'react';
+
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import {
   NavigationContainer,
   DarkTheme,
@@ -50,7 +52,6 @@ function HomeStack() {
   );
 }
 
-
 function TabsNavigator() {
   const bookmarks = useSelector((state) => state.articles.bookmarks);
   const hasBookmarks = bookmarks?.length > 0;
@@ -69,16 +70,18 @@ function TabsNavigator() {
           </TouchableOpacity>
         ),
         tabBarIcon: ({ color, size }) => {
-          let iconName;
-          if (route.name === 'HomeTab') iconName = 'home-outline';
-          else if (route.name === 'Search') iconName = 'search-outline';
-          else if (route.name === 'Bookmarks') iconName = 'bookmark-outline';
+  let iconName;
+  let iconColor = color;
 
-          const iconColor =
-            route.name === 'Bookmarks' && hasBookmarks ? '#007AFF' : color;
+  if (route.name === 'HomeTab') iconName = 'home-outline';
+  else if (route.name === 'Search') iconName = 'search-outline';
+  else if (route.name === 'Bookmarks') {
+    iconName = hasBookmarks ? 'bookmark' : 'bookmark-outline';
+    iconColor = hasBookmarks ? '#007AFF' : color;
+  }
 
-          return <Ionicons name={iconName} size={size} color={iconColor} />;
-        },
+  return <Ionicons name={iconName} size={size} color={iconColor} />;
+},
       })}
     >
       <Tab.Screen
@@ -100,6 +103,15 @@ function TabsNavigator() {
   );
 }
 
+function AppNavigator() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="Tabs" component={TabsNavigator} options={{ headerShown: false }} />
+      <Stack.Screen name="Details" component={DetailScreen} />
+    </Stack.Navigator>
+  );
+}
+
 function AppContent() {
   const dispatch = useDispatch();
   const { theme } = useTheme();
@@ -114,7 +126,7 @@ function AppContent() {
     <>
       <StatusBar style={theme === 'dark' ? 'light' : 'dark'} />
       <NavigationContainer theme={theme === 'dark' ? DarkTheme : DefaultTheme}>
-        <TabsNavigator />
+        <AppNavigator />
       </NavigationContainer>
     </>
   );
@@ -124,7 +136,9 @@ export default function App() {
   return (
     <Provider store={store}>
       <ThemeProvider>
-        <AppContent />
+        <SafeAreaProvider>
+          <AppContent />
+        </SafeAreaProvider>
       </ThemeProvider>
     </Provider>
   );
